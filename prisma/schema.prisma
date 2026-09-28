@@ -3,15 +3,98 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-model Medicament {
-  id         Int      @id @default(autoincrement())
-  nom        String
-  quantite   Int
-  prix       Float
-  expiration String
-  createdAt  DateTime @default(now())
+model Profile {
+  id        String   @id @default(uuid()) // Doit correspondre à l'ID de auth.users dans Supabase
+  role      String   // 'patient' ou 'pharmacien'
+  nom       String
+  telephone String?
+  region    String?
+
+  pharmacies  Pharmacies[]
+  ordonnances Ordonnances[]
+  commandes   Commandes[]
+}
+
+model Pharmacies {
+  id              String   @id @default(uuid())
+  proprietaire_id String
+  proprietaire    Profile  @relation(fields: [proprietaire_id], references: [id], onDelete: Cascade)
+  nom             String
+  adresse         String?
+  ville           String?
+  region          String?
+  latitude        Float?
+  longitude       Float?
+  telephone       String?
+  horaires        String?
+  est_de_garde    Boolean  @default(false)
+
+  stocks      Stocks[]
+  ordonnances Ordonnances[]
+  commandes   Commandes[]
+}
+
+model Medicaments {
+  id                 String   @id @default(uuid())
+  nom                String
+  categorie          String?
+  ordonnance_requise Boolean  @default(false)
+
+  stocks         Stocks[]
+  commande_items CommandeItems[]
+}
+
+model Stocks {
+  pharmacie_id  String
+  medicament_id String
+  quantite      Int      @default(0)
+  prix          Int      // en FCFA
+
+  pharmacie  Pharmacies  @relation(fields: [pharmacie_id], references: [id], onDelete: Cascade)
+  medicament Medicaments @relation(fields: [medicament_id], references: [id], onDelete: Cascade)
+
+  @@id([pharmacie_id, medicament_id])
+}
+
+model Ordonnances {
+  id           String   @id @default(uuid())
+  patient_id   String
+  pharmacie_id String
+  fichier_url  String
+  statut       String   @default("en_attente") // 'en_attente', 'validee', 'rejetee'
+  created_at   DateTime @default(now())
+
+  patient   Profile    @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  pharmacie Pharmacies @relation(fields: [pharmacie_id], references: [id], onDelete: Cascade)
+}
+
+model Commandes {
+  id           String   @id @default(uuid())
+  patient_id   String
+  pharmacie_id String
+  statut       String   @default("en_attente") // 'en_attente', 'confirmee', 'prete', 'recuperee', 'annulee'
+  total        Int      @default(0) // En FCFA
+  date         DateTime @default(now())
+
+  patient   Profile    @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  pharmacie Pharmacies @relation(fields: [pharmacie_id], references: [id], onDelete: Cascade)
+
+  items CommandeItems[]
+}
+
+model CommandeItems {
+  commande_id   String
+  medicament_id String
+  quantite      Int
+  prix_unitaire Int      // En FCFA
+
+  commande   Commandes   @relation(fields: [commande_id], references: [id], onDelete: Cascade)
+  medicament Medicaments @relation(fields: [medicament_id], references: [id], onDelete: Cascade)
+
+  @@id([commande_id, medicament_id])
 }

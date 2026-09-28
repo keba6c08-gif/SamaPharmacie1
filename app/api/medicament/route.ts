@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
-  const medicaments = await prisma.medicament.findMany();
+  const medicaments = await prisma.medicaments.findMany();
 
   return NextResponse.json(medicaments);
 }
@@ -10,12 +10,11 @@ export async function GET() {
 export async function POST(request: Request) {
   const donnees = await request.json();
 
-  const medicament = await prisma.medicament.create({
+  const medicament = await prisma.medicaments.create({
     data: {
       nom: donnees.nom,
-      quantite: Number(donnees.quantite),
-      prix: Number(donnees.prix),
-      expiration: donnees.expiration,
+      categorie: donnees.categorie ?? null,
+      ordonnance_requise: Boolean(donnees.ordonnance_requise),
     },
   });
 

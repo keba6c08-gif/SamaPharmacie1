@@ -12,15 +12,15 @@
   --palette-blue-700: #1d4ed8;
   --palette-blue-800: #1e40af;
   --palette-blue-900: #1e3a8a;
-  --palette-teal-50: #effcfb;
-  --palette-teal-100: #ccfbf1;
-  --palette-teal-200: #99f6e4;
-  --palette-teal-300: #5eead4;
-  --palette-teal-500: #10c5b4;
-  --palette-teal-600: #0bb6a9;
-  --palette-teal-700: #08a99f;
-  --palette-teal-800: #078b88;
-  --palette-teal-900: #086d73;
+  --palette-teal-50: #e9f7ef;
+  --palette-teal-100: #d9f2e3;
+  --palette-teal-200: #b9e2c9;
+  --palette-teal-300: #7dcc9e;
+  --palette-teal-500: #10a765;
+  --palette-teal-600: #0a8f56;
+  --palette-teal-700: #087443;
+  --palette-teal-800: #055c35;
+  --palette-teal-900: #06452b;
 }
 
 @theme inline {

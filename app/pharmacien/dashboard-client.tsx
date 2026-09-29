@@ -113,17 +113,10 @@ export default function PharmacienDashboard({
           <h1 className="mt-2 text-3xl font-bold text-slate-950">{pharmacyName}</h1>
           <p className="mt-2 text-sm text-slate-600">Responsable : {ownerName}{email && ` · ${email}`}</p>
         </div>
-        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-          <Link href={preview ? '/apercu-pharmacie/stock' : '/pharmacien/stock'} className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-800 hover:bg-slate-50">
-            <Package className="h-4 w-4" aria-hidden="true" /> Gérer le stock
-          </Link>
-          <button type="button" onClick={toggleOnCall} className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-white ${isOnCall ? 'bg-slate-700 hover:bg-slate-800' : 'bg-emerald-700 hover:bg-emerald-800'}`}>
-            <Power className="h-4 w-4" aria-hidden="true" />
-            {isOnCall ? 'Terminer la garde' : 'Mettre en garde'}
-          </button>
-        </div>
+        <Link href={preview ? '/apercu-pharmacie/stock' : '/pharmacien/stock'} className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-emerald-700 px-4 text-sm font-semibold text-white hover:bg-emerald-800">
+          <Package className="h-4 w-4" aria-hidden="true" /> Gérer le stock
+        </Link>
       </section>
-      {guardMessage && <p role="status" className="-mt-5 text-xs leading-5 text-slate-600">{guardMessage}</p>}
 
       <div className="grid gap-6 sm:grid-cols-3">
         <div className="border-b border-slate-200 pb-4 sm:border-b-0 sm:border-r sm:pr-5">
@@ -140,7 +133,7 @@ export default function PharmacienDashboard({
         </div>
       </div>
 
-      <section aria-labelledby="on-call-control-heading" className="flex flex-col gap-3 border-y border-slate-200 bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+      <section aria-labelledby="on-call-control-heading" className="flex flex-col gap-4 border-y border-slate-200 bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-3">
           <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${isOnCall ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}`}>
             {isOnCall ? <MapPin className="h-5 w-5" aria-hidden="true" /> : <LocateFixed className="h-5 w-5" aria-hidden="true" />}
@@ -152,9 +145,11 @@ export default function PharmacienDashboard({
             </p>
           </div>
         </div>
-        <span className={`inline-flex w-fit items-center rounded-full px-3 py-1.5 text-xs font-semibold ${isOnCall ? 'bg-emerald-100 text-emerald-900' : 'bg-slate-100 text-slate-700'}`}>
-          {isOnCall ? 'Garde activée' : 'Garde désactivée'}
-        </span>
+        <button type="button" onClick={toggleOnCall} className={`inline-flex h-11 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-white ${isOnCall ? 'bg-slate-700 hover:bg-slate-800' : 'bg-emerald-700 hover:bg-emerald-800'}`}>
+          <Power className="h-4 w-4" aria-hidden="true" />
+          {isOnCall ? 'Terminer la garde' : 'Mettre ma pharmacie de garde'}
+        </button>
+        {guardMessage && <p role="status" className="text-xs leading-5 text-slate-600 sm:max-w-xs">{guardMessage}</p>}
       </section>
 
       <section aria-labelledby="verification-heading" className={`flex flex-col gap-3 border-y px-4 py-4 sm:flex-row sm:items-center sm:justify-between ${verified ? 'border-emerald-200 bg-emerald-50' : 'border-amber-200 bg-amber-50'}`}>

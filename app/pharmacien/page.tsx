@@ -10,15 +10,27 @@ export default async function PharmacienPage() {
     redirect('/login?role=pharmacien');
   }
 
+  const { data: pharmacy } = await supabase
+    .from('pharmacies')
+    .select('*')
+    .eq('owner_id', user.id)
+    .maybeSingle();
+
+  const pharmacyName = pharmacy?.name || user.user_metadata.pharmacy_name || 'Ma pharmacie';
+  const ownerName = user.user_metadata.full_name || user.email || 'Pharmacien';
+  const pharmacyAddress = pharmacy?.address || user.user_metadata.pharmacy_address || '';
+  const pharmacyCity = pharmacy?.city || user.user_metadata.pharmacy_city || '';
+  const verificationStatus = pharmacy?.status === 'approved' ? 'verified' : 'pending';
+
   return (
     <PharmacienDashboard
-      pharmacyName={user.user_metadata.pharmacy_name || 'Ma pharmacie'}
-      ownerName={user.user_metadata.full_name || user.email || 'Pharmacien'}
+      pharmacyName={pharmacyName}
+      ownerName={ownerName}
       email={user.email || ''}
-      pharmacyId={user.id}
-      pharmacyAddress={user.user_metadata.pharmacy_address || ''}
-      pharmacyCity={user.user_metadata.pharmacy_city || ''}
-      verificationStatus={user.user_metadata.verification_status === 'verified' ? 'verified' : 'pending'}
+      pharmacyId={pharmacy?.id || user.id}
+      pharmacyAddress={pharmacyAddress}
+      pharmacyCity={pharmacyCity}
+      verificationStatus={verificationStatus}
     />
   );
 }

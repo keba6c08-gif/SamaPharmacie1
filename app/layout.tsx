@@ -32,12 +32,12 @@ export default async function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-[#f4f8ff]`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-[#f3fbf6]`}
     >
       <body className="min-h-full flex flex-col text-gray-900">
         <header className="border-b border-slate-200 bg-white">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-5 gap-y-3 px-4 py-3 sm:px-6 lg:px-8">
-            <Link href="/" className="text-xl font-bold text-blue-700">SamaPharmacie</Link>
+            <Link href="/" className="text-xl font-bold text-emerald-700">SamaPharmacie</Link>
             <SiteNavigation role={role} isAuthenticated={Boolean(user)} />
           </div>
         </header>

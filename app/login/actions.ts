@@ -4,6 +4,60 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
+async function persistPharmacyRegistration(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  email: string,
+  pharmacistDetails: {
+    full_name: string
+    phone: string
+    pharmacy_name: string
+    pharmacy_address: string
+    pharmacy_city: string
+    pharmacy_region: string
+    pharmacist_registration: string
+    pharmacy_authorization: string
+  },
+) {
+  const profilePayload = {
+    id: userId,
+    role: 'pharmacien',
+    full_name: pharmacistDetails.full_name,
+    phone: pharmacistDetails.phone,
+    region: pharmacistDetails.pharmacy_region,
+  }
+
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .upsert(profilePayload, { onConflict: 'id' })
+
+  if (profileError) {
+    throw new Error(`profiles: ${profileError.message}`)
+  }
+
+  const { error: pharmacyError } = await supabase
+    .from('pharmacies')
+    .upsert(
+      {
+        owner_id: userId,
+        name: pharmacistDetails.pharmacy_name,
+        address: pharmacistDetails.pharmacy_address,
+        city: pharmacistDetails.pharmacy_city,
+        region: pharmacistDetails.pharmacy_region,
+        phone: pharmacistDetails.phone,
+        email,
+        pharmacist_registration_number: pharmacistDetails.pharmacist_registration,
+        pharmacy_authorization_number: pharmacistDetails.pharmacy_authorization,
+        status: 'pending',
+      },
+      { onConflict: 'owner_id' },
+    )
+
+  if (pharmacyError) {
+    throw new Error(`pharmacies: ${pharmacyError.message}`)
+  }
+}
+
 export async function login(formData: FormData) {
   const supabase = await createClient()
 
@@ -71,6 +125,15 @@ export async function signup(formData: FormData) {
 
   if (error) {
     redirect(`/login?role=${role}&error=Inscription impossible`)
+  }
+
+  if (authData.user) {
+    try {
+      await persistPharmacyRegistration(supabase, authData.user.id, data.email, pharmacistDetails)
+    } catch (persistError) {
+      console.error('Pharmacy registration persistence failed:', persistError)
+      redirect('/login?role=pharmacien&error=Inscription enregistrée, mais la fiche pharmacie n’a pas pu être créée')
+    }
   }
 
   revalidatePath('/', 'layout')

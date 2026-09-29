@@ -1,0 +1,16 @@
+{
+	"inputs": [
+		{
+			"id": "project-ref",
+			"type": "promptString",
+			"description": "Identifiant du projet Supabase (project ref)"
+		},
+		{
+			"id": "SUPABASE_ACCESS_TOKEN",
+			"type": "promptString",
+			"description": "Jeton d'accès Supabase",
+			"password": true
+		}
+	],
+	"servers": {}
+}
